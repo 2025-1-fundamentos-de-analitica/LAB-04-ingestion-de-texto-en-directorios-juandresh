@@ -4,7 +4,9 @@
 """
 Escriba el codigo que ejecute la accion solicitada en cada pregunta.
 """
-
+import zipfile
+import os
+import pandas as pd
 
 def pregunta_01():
     """
@@ -71,3 +73,55 @@ def pregunta_01():
 
 
     """
+
+    zip = "files/input.zip"
+    ruta = "files"
+    ruta_zip ="files/input"
+
+    if not os.path.exists(ruta):
+        os.makedirs(ruta)
+    
+    if not os.path.exists(ruta_zip):
+        with zipfile.ZipFile(zip, "r") as zip_ref:
+            zip_ref.extractall(ruta)
+
+    out_path = "files/output"
+
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
+
+    carpetas = ["negative", "neutral", "positive"]
+
+#"files/input/test"
+    phrases_test = []
+    sentiments_test = []
+
+    for em in carpetas:
+        archivos = os.listdir("files/input/test/"+em)
+        for file in archivos:
+            with open(f"files/input/test/{em}/{file}", "r") as cont:
+                phrases_test.append(cont.readline())
+                sentiments_test.append(em)
+
+    df_test = pd.DataFrame()
+    df_test["phrase"] = phrases_test
+    df_test["target"] = sentiments_test
+
+    df_test.to_csv('files/output/test_dataset.csv', index=False)
+
+#"files/input/train"
+    phrases_train = []
+    sentiments_train = []
+
+    for em in carpetas:
+        archivos = os.listdir("files/input/train/"+em)
+        for file in archivos:
+            with open(f"files/input/train/{em}/{file}", "r") as cont:
+                phrases_train.append(cont.readline())
+                sentiments_train.append(em)
+
+    df_train = pd.DataFrame()
+    df_train["phrase"] = phrases_train
+    df_train["target"] = sentiments_train
+
+    df_train.to_csv('files/output/train_dataset.csv', index=False)
